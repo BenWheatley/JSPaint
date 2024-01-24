@@ -27,7 +27,8 @@
         }
 
         #toolSelector,
-        #colorPicker {
+        #colorPicker,
+        #brushSize {
             margin-right: 10px;
         }
     </style>
@@ -45,15 +46,18 @@
             </select>
         </div>
         <input type="color" id="colorPicker" value="#000000">
+        <label for="brushSize">Brush Size: </label>
+        <input type="range" id="brushSize" min="1" max="50" value="10">
     </div>
     <canvas id="paintCanvas" width="800" height="600"></canvas>
 
     <script>
-        // JavaScript code for drawing on the canvas with tool and color selection
+        // JavaScript code for drawing on the canvas with tool, color, and brush size selection
         const canvas = document.getElementById('paintCanvas');
         const context = canvas.getContext('2d');
         const toolSelector = document.getElementById('toolSelector');
         const colorPicker = document.getElementById('colorPicker');
+        const brushSizeInput = document.getElementById('brushSize');
         let painting = false;
 
         // Function to fill the canvas with a specified color
@@ -88,6 +92,7 @@
 
             const selectedTool = toolSelector.value;
             const selectedColor = colorPicker.value;
+            const brushSize = brushSizeInput.value;
 
             context.lineCap = 'round';
 
@@ -97,7 +102,7 @@
                     break;
                 case 'brush':
                 case 'eraser':
-                    context.lineWidth = 10;
+                    context.lineWidth = brushSize;
                     break;
                 // Add more cases for other tools
             }
