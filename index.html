@@ -225,6 +225,7 @@
                         canvas.width = img.width;
                         canvas.height = img.height;
                         context.drawImage(img, 0, 0);
+                        loadImageInput.value = '';  // Reset the value after loading the image
                     };
                     img.src = event.target.result;
                 };
