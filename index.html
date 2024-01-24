@@ -169,12 +169,13 @@
             context.strokeStyle = selectedColor;
             
             const rect = canvas.getBoundingClientRect();
+            const canvasContainerRect = canvasContainer.getBoundingClientRect();
             
-            // Adjusting the coordinates to account for scroll position
-            const x1 = startX - rect.left - canvas.scrollLeft;
-            const y1 = startY - rect.top - canvas.scrollTop;
-            const x2 = endX - rect.left - canvas.scrollLeft;
-            const y2 = endY - rect.top - canvas.scrollTop;
+            // Adjusting the coordinates to account for scroll position, canvas position, and canvas container position
+            const x1 = startX - rect.left - canvas.scrollLeft + canvasContainerRect.left;
+            const y1 = startY - rect.top - canvas.scrollTop + canvasContainerRect.top;
+            const x2 = endX - rect.left - canvas.scrollLeft + canvasContainerRect.left;
+            const y2 = endY - rect.top - canvas.scrollTop + canvasContainerRect.top;
             
             const x = (x1 + x2) / 2;
             const y = (y1 + y2) / 2;
@@ -186,7 +187,6 @@
             context.stroke();
             context.beginPath();
         }
-
 
         function floodFill(x, y, fillColor) {
             const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
