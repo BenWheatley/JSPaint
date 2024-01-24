@@ -21,28 +21,38 @@
             cursor: crosshair;
         }
 
-        #toolSelector {
+        #toolColorRow {
+            display: flex;
             margin-bottom: 10px;
+        }
+
+        #toolSelector,
+        #colorPicker {
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
-    <div id="toolSelector">
-        <label for="toolSelector">Select Tool: </label>
-        <select id="toolSelector">
-            <option value="pencil">Pencil</option>
-            <option value="brush">Brush</option>
-            <option value="eraser">Eraser</option>
-            <!-- Add more tool options as needed -->
-        </select>
+    <div id="toolColorRow">
+        <div>
+            <label for="toolSelector">Select Tool: </label>
+            <select id="toolSelector">
+                <option value="pencil">Pencil</option>
+                <option value="brush">Brush</option>
+                <option value="eraser">Eraser</option>
+                <!-- Add more tool options as needed -->
+            </select>
+        </div>
+        <input type="color" id="colorPicker" value="#000000">
     </div>
     <canvas id="paintCanvas" width="800" height="600"></canvas>
 
     <script>
-        // JavaScript code for drawing on the canvas with tool selection
+        // JavaScript code for drawing on the canvas with tool and color selection
         const canvas = document.getElementById('paintCanvas');
         const context = canvas.getContext('2d');
         const toolSelector = document.getElementById('toolSelector');
+        const colorPicker = document.getElementById('colorPicker');
         let painting = false;
 
         // Function to fill the canvas with a specified color
@@ -71,19 +81,9 @@
             context.lineCap = 'round';
 
             const selectedTool = toolSelector.value;
+            const selectedColor = colorPicker.value;
 
-            switch (selectedTool) {
-                case 'pencil':
-                    context.strokeStyle = 'black';
-                    break;
-                case 'brush':
-                    context.strokeStyle = 'blue';
-                    break;
-                case 'eraser':
-                    context.strokeStyle = 'white';
-                    break;
-                // Add more cases for other tools
-            }
+            context.strokeStyle = selectedTool === 'eraser' ? 'white' : selectedColor;
 
             context.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
             context.stroke();
