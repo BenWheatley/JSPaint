@@ -16,6 +16,10 @@
             flex-direction: column; /* Align items in a column */
         }
 
+        #canvasContainer {
+            overflow: auto;
+        }
+
         canvas {
             border: 1px solid #000;
             cursor: crosshair;
@@ -61,7 +65,9 @@
         <label for="brushSize">Brush Size: </label>
         <input type="range" id="brushSize" min="1" max="50" value="10">
     </div>
-    <canvas id="paintCanvas" width="800" height="600"></canvas>
+    <div id="canvasContainer">
+        <canvas id="paintCanvas" width="800" height="600"></canvas>
+    </div>
 
     <script>
         // JavaScript code for drawing on the canvas with tool, color, and brush size selection
