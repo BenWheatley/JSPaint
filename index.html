@@ -21,7 +21,8 @@
             cursor: crosshair;
         }
 
-        #toolColorRow {
+        #toolColorRow,
+        #fileActionsRow {
             display: flex;
             margin-bottom: 10px;
         }
@@ -31,9 +32,20 @@
         #brushSize {
             margin-right: 10px;
         }
+
+        #newImage,
+        #saveImage,
+        #loadImage {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
+    <div id="fileActionsRow">
+        <button id="newImage">New Image</button>
+        <button id="saveImage">Save Image</button>
+        <input type="file" id="loadImage">
+    </div>
     <div id="toolColorRow">
         <div>
             <label for="toolSelector">Select Tool: </label>
@@ -58,6 +70,9 @@
         const toolSelector = document.getElementById('toolSelector');
         const colorPicker = document.getElementById('colorPicker');
         const brushSizeInput = document.getElementById('brushSize');
+        const newImageButton = document.getElementById('newImage');
+        const saveImageButton = document.getElementById('saveImage');
+        const loadImageInput = document.getElementById('loadImage');
         let painting = false;
 
         // Function to fill the canvas with a specified color
@@ -175,6 +190,54 @@
                 ]
                 : null;
         }
+
+        function createNewImage() {
+            const newWidth = prompt('Enter the width of the new image:', canvas.width);
+            const newHeight = prompt('Enter the height of the new image:', canvas.height);
+
+            if (newWidth && newHeight) {
+                canvas.width = parseInt(newWidth);
+                canvas.height = parseInt(newHeight);
+                fillCanvas('white');
+            }
+        }
+
+        function saveImage() {
+            const dataURL = canvas.toDataURL('image/png');
+            const a = document.createElement('a');
+            a.href = dataURL;
+            a.download = 'myImage.png';
+            a.click();
+        }
+
+        function loadImage() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.addEventListener('change', handleFileSelect);
+            fileInput.click();
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const img = new Image();
+                    img.onload = function () {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        context.drawImage(img, 0, 0);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        newImageButton.addEventListener('click', createNewImage);
+        saveImageButton.addEventListener('click', saveImage);
+        loadImageInput.addEventListener('change', loadImage);
 
         canvas.addEventListener('mousedown', startPosition);
         canvas.addEventListener('mouseup', endPosition);
