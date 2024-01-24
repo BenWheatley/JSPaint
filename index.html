@@ -60,6 +60,7 @@
                 <option value="brush">Brush</option>
                 <option value="eraser">Eraser</option>
                 <option value="floodFill">Flood Fill</option>
+                <option value="drawEllipse">Draw Ellipse</option>
                 <!-- Add more tool options as needed -->
             </select>
         </div>
@@ -82,6 +83,7 @@
         const saveImageButton = document.getElementById('saveImage');
         const loadImageInput = document.getElementById('loadImage');
         let painting = false;
+        let startX, startY;
 
         // Function to fill the canvas with a specified color
         function fillCanvas(color) {
@@ -94,20 +96,35 @@
 
         function startPosition(e) {
             painting = true;
+            startX = e.clientX - canvas.offsetLeft;
+            startY = e.clientY - canvas.offsetTop;
 
             const selectedTool = toolSelector.value;
 
             if (selectedTool === 'floodFill') {
                 const fillColor = hexToRgb(colorPicker.value);
-                floodFill(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop, fillColor);
+                floodFill(startX, startY, fillColor);
+            } else if (selectedTool === 'drawEllipse') {
+                // Start drawing ellipse
+                context.beginPath();
             } else {
                 draw(e);
             }
         }
 
-        function endPosition() {
-            painting = false;
-            context.beginPath();
+        function endPosition(e) {
+            if (painting) {
+                const selectedTool = toolSelector.value;
+
+                if (selectedTool === 'drawEllipse') {
+                    const endX = e.clientX - canvas.offsetLeft;
+                    const endY = e.clientY - canvas.offsetTop;
+                    drawEllipse(startX, startY, endX, endY);
+                }
+
+                painting = false;
+                context.beginPath();
+            }
         }
 
         function draw(e) {
@@ -140,6 +157,26 @@
             context.stroke();
             context.beginPath();
             context.moveTo(x, y);
+        }
+
+        function drawEllipse(startX, startY, endX, endY) {
+            const selectedColor = colorPicker.value;
+            const brushSize = brushSizeInput.value;
+
+            context.lineCap = 'round';
+
+            context.lineWidth = brushSize;
+            context.strokeStyle = selectedColor;
+
+            const x = (startX + endX) / 2;
+            const y = (startY + endY) / 2;
+            const radiusX = Math.abs(endX - startX) / 2;
+            const radiusY = Math.abs(endY - startY) / 2;
+
+            context.beginPath();
+            context.ellipse(x, y, radiusX, radiusY, 0, 0, 2 * Math.PI);
+            context.stroke();
+            context.beginPath();
         }
 
         function floodFill(x, y, fillColor) {
