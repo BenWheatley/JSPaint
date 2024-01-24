@@ -73,7 +73,6 @@
     </div>
 
     <script>
-        let initialCanvasState;
         // JavaScript code for drawing on the canvas with tool, color, and brush size selection
         const canvas = document.getElementById('paintCanvas');
         const context = canvas.getContext('2d');
@@ -85,6 +84,7 @@
         const loadImageInput = document.getElementById('loadImage');
         let painting = false;
         let startX, startY;
+        let initialCanvasState;
 
         // Function to fill the canvas with a specified color
         function fillCanvas(color) {
@@ -95,110 +95,100 @@
         // Fill the canvas with white by default
         fillCanvas('white');
 
-function startPosition(e) {
-    painting = true;
-    startX = e.clientX - canvas.offsetLeft;
-    startY = e.clientY - canvas.offsetTop;
+        function startPosition(e) {
+            painting = true;
+            startX = e.clientX - canvas.offsetLeft;
+            startY = e.clientY - canvas.offsetTop;
 
-    const selectedTool = toolSelector.value;
+            const selectedTool = toolSelector.value;
 
-    if (selectedTool === 'floodFill') {
-        // Handle flood fill
-        const fillColor = hexToRgb(colorPicker.value);
-        floodFill(startX, startY, fillColor);
-    } else if (selectedTool === 'drawEllipse') {
-        // Save the current canvas state when ellipse tool is initiated
-        initialCanvasState = context.getImageData(0, 0, canvas.width, canvas.height);
-    } else {
-        // Handle other tools (e.g., pencil, brush, eraser)
-        draw(e);
-    }
-}
-
-function endPosition(e) {
-    if (painting) {
-        const selectedTool = toolSelector.value;
-
-        if (selectedTool === 'drawEllipse') {
-            // Draw the saved initial canvas state first
-            context.putImageData(initialCanvasState, 0, 0);
-            const endX = e.clientX - canvas.offsetLeft;
-            const endY = e.clientY - canvas.offsetTop;
-            drawEllipse(startX, startY, endX, endY);
-            initialCanvasState = null; // Clear the initial canvas state after drawing the ellipse
-        } else {
-            painting = false;
-            context.beginPath();
-        }
-    }
-}
-
-function draw(e) {
-    if (!painting) return;
-
-    const selectedTool = toolSelector.value;
-
-    if (selectedTool === 'drawEllipse') {
-        // Draw the saved initial canvas state first
-        context.putImageData(initialCanvasState, 0, 0);
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left - canvas.scrollLeft;
-        const y = e.clientY - rect.top - canvas.scrollTop;
-        drawEllipse(startX, startY, x, y);
-    } else {
-        // Handle other tools (e.g., pencil, brush, eraser)
-        const selectedColor = colorPicker.value;
-        const brushSize = brushSizeInput.value;
-
-        context.lineCap = 'round';
-
-        switch (selectedTool) {
-            case 'pencil':
-                context.lineWidth = 1;
-                break;
-            case 'brush':
-            case 'eraser':
-                context.lineWidth = brushSize;
-                break;
-            // Add more cases for other tools
+            if (selectedTool === 'floodFill') {
+                const fillColor = hexToRgb(colorPicker.value);
+                floodFill(startX, startY, fillColor);
+            } else if (selectedTool === 'drawEllipse') {
+                initialCanvasState = context.getImageData(0, 0, canvas.width, canvas.height);
+            } else {
+                draw(e);
+            }
         }
 
-        context.strokeStyle = selectedTool === 'eraser' ? 'white' : selectedColor;
+        function endPosition(e) {
+            if (painting) {
+                const selectedTool = toolSelector.value;
 
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left - canvas.scrollLeft;
-        const y = e.clientY - rect.top - canvas.scrollTop;
+                if (selectedTool === 'drawEllipse') {
+                    context.putImageData(initialCanvasState, 0, 0);
+                    const endX = e.clientX - canvas.offsetLeft;
+                    const endY = e.clientY - canvas.offsetTop;
+                    drawEllipse(startX, startY, endX, endY);
+                    initialCanvasState = null;
+                } else {
+                    painting = false;
+                    context.beginPath();
+                }
+            }
+        }
 
-        context.lineTo(x, y);
-        context.stroke();
-        context.beginPath();
-        context.moveTo(x, y);
-    }
-}
+        function draw(e) {
+            if (!painting) return;
+
+            const selectedTool = toolSelector.value;
+
+            if (selectedTool === 'drawEllipse') {
+                context.putImageData(initialCanvasState, 0, 0);
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left - canvas.scrollLeft;
+                const y = e.clientY - rect.top - canvas.scrollTop;
+                drawEllipse(startX, startY, x, y);
+            } else {
+                const selectedColor = colorPicker.value;
+                const brushSize = brushSizeInput.value;
+
+                context.lineCap = 'round';
+
+                switch (selectedTool) {
+                    case 'pencil':
+                        context.lineWidth = 1;
+                        break;
+                    case 'brush':
+                    case 'eraser':
+                        context.lineWidth = brushSize;
+                        break;
+                }
+
+                context.strokeStyle = selectedTool === 'eraser' ? 'white' : selectedColor;
+
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left - canvas.scrollLeft;
+                const y = e.clientY - rect.top - canvas.scrollTop;
+
+                context.lineTo(x, y);
+                context.stroke();
+                context.beginPath();
+                context.moveTo(x, y);
+            }
+        }
 
         function drawEllipse(startX, startY, endX, endY) {
             const selectedColor = colorPicker.value;
             const brushSize = brushSizeInput.value;
-            
+
             context.lineCap = 'round';
-            
+
             context.lineWidth = brushSize;
             context.strokeStyle = selectedColor;
-            
+
             const rect = canvas.getBoundingClientRect();
-            const canvasContainerRect = canvasContainer.getBoundingClientRect();
-            
-            // Adjusting the coordinates to account for scroll position, canvas position, and canvas container position
             const x1 = startX - rect.left - canvas.scrollLeft + canvasContainerRect.left;
             const y1 = startY - rect.top - canvas.scrollTop + canvasContainerRect.top;
             const x2 = endX - rect.left - canvas.scrollLeft + canvasContainerRect.left;
             const y2 = endY - rect.top - canvas.scrollTop + canvasContainerRect.top;
-            
+
             const x = (x1 + x2) / 2;
             const y = (y1 + y2) / 2;
             const radiusX = Math.abs(x2 - x1) / 2;
             const radiusY = Math.abs(y2 - y1) / 2;
-            
+
             context.beginPath();
             context.ellipse(x, y, radiusX, radiusY, 0, 0, 2 * Math.PI);
             context.stroke();
