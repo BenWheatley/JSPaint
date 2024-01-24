@@ -19,15 +19,29 @@
             border: 1px solid #000;
             cursor: crosshair;
         }
+
+        #toolSelector {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
+    <div>
+        <label for="toolSelector">Select Tool: </label>
+        <select id="toolSelector">
+            <option value="pencil">Pencil</option>
+            <option value="brush">Brush</option>
+            <option value="eraser">Eraser</option>
+            <!-- Add more tool options as needed -->
+        </select>
+    </div>
     <canvas id="paintCanvas" width="800" height="600"></canvas>
 
     <script>
-        // JavaScript code for drawing on the canvas
+        // JavaScript code for drawing on the canvas with tool selection
         const canvas = document.getElementById('paintCanvas');
         const context = canvas.getContext('2d');
+        const toolSelector = document.getElementById('toolSelector');
         let painting = false;
 
         function startPosition(e) {
@@ -45,7 +59,21 @@
 
             context.lineWidth = 5;
             context.lineCap = 'round';
-            context.strokeStyle = 'black';
+
+            const selectedTool = toolSelector.value;
+
+            switch (selectedTool) {
+                case 'pencil':
+                    context.strokeStyle = 'black';
+                    break;
+                case 'brush':
+                    context.strokeStyle = 'blue';
+                    break;
+                case 'eraser':
+                    context.strokeStyle = 'white';
+                    break;
+                // Add more cases for other tools
+            }
 
             context.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
             context.stroke();
