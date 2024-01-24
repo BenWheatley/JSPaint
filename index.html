@@ -40,6 +40,7 @@
                 <option value="pencil">Pencil</option>
                 <option value="brush">Brush</option>
                 <option value="eraser">Eraser</option>
+                <option value="floodFill">Flood Fill</option>
                 <!-- Add more tool options as needed -->
             </select>
         </div>
@@ -66,7 +67,14 @@
 
         function startPosition(e) {
             painting = true;
-            draw(e);
+
+            const selectedTool = toolSelector.value;
+
+            if (selectedTool === 'floodFill') {
+                floodFill(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop, colorPicker.value);
+            } else {
+                draw(e);
+            }
         }
 
         function endPosition() {
@@ -99,6 +107,48 @@
             context.stroke();
             context.beginPath();
             context.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        }
+
+        function floodFill(x, y, fillColor) {
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            const pixelStack = [[x, y]];
+
+            const targetColor = getPixelColor(imageData, x, y);
+            if (targetColor === fillColor) return;
+
+            while (pixelStack.length) {
+                const [currentX, currentY] = pixelStack.pop();
+
+                if (currentX >= 0 && currentX < canvas.width && currentY >= 0 && currentY < canvas.height) {
+                    if (getPixelColor(imageData, currentX, currentY) === targetColor) {
+                        setPixelColor(imageData, currentX, currentY, fillColor);
+                        pixelStack.push([currentX + 1, currentY]);
+                        pixelStack.push([currentX - 1, currentY]);
+                        pixelStack.push([currentX, currentY + 1]);
+                        pixelStack.push([currentX, currentY - 1]);
+                    }
+                }
+            }
+
+            context.putImageData(imageData, 0, 0);
+        }
+
+        function getPixelColor(imageData, x, y) {
+            const index = (y * imageData.width + x) * 4;
+            return [
+                imageData.data[index],
+                imageData.data[index + 1],
+                imageData.data[index + 2],
+                imageData.data[index + 3]
+            ];
+        }
+
+        function setPixelColor(imageData, x, y, color) {
+            const index = (y * imageData.width + x) * 4;
+            imageData.data[index] = color[0];
+            imageData.data[index + 1] = color[1];
+            imageData.data[index + 2] = color[2];
+            imageData.data[index + 3] = color[3];
         }
 
         canvas.addEventListener('mousedown', startPosition);
