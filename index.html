@@ -211,11 +211,7 @@
         }
 
         function loadImage() {
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = 'image/*';
-            fileInput.addEventListener('change', handleFileSelect);
-            fileInput.click();
+            loadImageInput.click();
         }
 
         function handleFileSelect(e) {
@@ -237,7 +233,7 @@
 
         newImageButton.addEventListener('click', createNewImage);
         saveImageButton.addEventListener('click', saveImage);
-        loadImageInput.addEventListener('change', loadImage);
+        loadImageInput.addEventListener('change', handleFileSelect);
 
         canvas.addEventListener('mousedown', startPosition);
         canvas.addEventListener('mouseup', endPosition);
