@@ -125,6 +125,7 @@ function endPosition(e) {
             const endX = e.clientX - canvas.offsetLeft;
             const endY = e.clientY - canvas.offsetTop;
             drawEllipse(startX, startY, endX, endY);
+            initialCanvasState = null; // Clear the initial canvas state after drawing the ellipse
         } else {
             painting = false;
             context.beginPath();
