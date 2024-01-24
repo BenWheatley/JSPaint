@@ -44,6 +44,15 @@
         const toolSelector = document.getElementById('toolSelector');
         let painting = false;
 
+        // Function to fill the canvas with a specified color
+        function fillCanvas(color) {
+            context.fillStyle = color;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Fill the canvas with white by default
+        fillCanvas('white');
+
         function startPosition(e) {
             painting = true;
             draw(e);
