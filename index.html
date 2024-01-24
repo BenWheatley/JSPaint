@@ -73,6 +73,7 @@
     </div>
 
     <script>
+        let initialCanvasState;
         // JavaScript code for drawing on the canvas with tool, color, and brush size selection
         const canvas = document.getElementById('paintCanvas');
         const context = canvas.getContext('2d');
@@ -94,38 +95,42 @@
         // Fill the canvas with white by default
         fillCanvas('white');
 
-        function startPosition(e) {
-            painting = true;
-            startX = e.clientX - canvas.offsetLeft;
-            startY = e.clientY - canvas.offsetTop;
+function startPosition(e) {
+    painting = true;
+    startX = e.clientX - canvas.offsetLeft;
+    startY = e.clientY - canvas.offsetTop;
 
-            const selectedTool = toolSelector.value;
+    const selectedTool = toolSelector.value;
 
-            if (selectedTool === 'floodFill') {
-                const fillColor = hexToRgb(colorPicker.value);
-                floodFill(startX, startY, fillColor);
-            } else if (selectedTool === 'drawEllipse') {
-                // Start drawing ellipse
-                context.beginPath();
-            } else {
-                draw(e);
-            }
+    if (selectedTool === 'floodFill') {
+        // Handle flood fill
+        const fillColor = hexToRgb(colorPicker.value);
+        floodFill(startX, startY, fillColor);
+    } else if (selectedTool === 'drawEllipse') {
+        // Save the current canvas state when ellipse tool is initiated
+        initialCanvasState = context.getImageData(0, 0, canvas.width, canvas.height);
+    } else {
+        // Handle other tools (e.g., pencil, brush, eraser)
+        draw(e);
+    }
+}
+
+function endPosition(e) {
+    if (painting) {
+        const selectedTool = toolSelector.value;
+
+        if (selectedTool === 'drawEllipse') {
+            // Draw the saved initial canvas state first
+            context.putImageData(initialCanvasState, 0, 0);
+            const endX = e.clientX - canvas.offsetLeft;
+            const endY = e.clientY - canvas.offsetTop;
+            drawEllipse(startX, startY, endX, endY);
+        } else {
+            painting = false;
+            context.beginPath();
         }
-
-        function endPosition(e) {
-            if (painting) {
-                const selectedTool = toolSelector.value;
-
-                if (selectedTool === 'drawEllipse') {
-                    const endX = e.clientX - canvas.offsetLeft;
-                    const endY = e.clientY - canvas.offsetTop;
-                    drawEllipse(startX, startY, endX, endY);
-                }
-
-                painting = false;
-                context.beginPath();
-            }
-        }
+    }
+}
 
 function draw(e) {
     if (!painting) return;
@@ -133,7 +138,8 @@ function draw(e) {
     const selectedTool = toolSelector.value;
 
     if (selectedTool === 'drawEllipse') {
-        // Handle ellipse drawing
+        // Draw the saved initial canvas state first
+        context.putImageData(initialCanvasState, 0, 0);
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left - canvas.scrollLeft;
         const y = e.clientY - rect.top - canvas.scrollTop;
@@ -168,7 +174,6 @@ function draw(e) {
         context.moveTo(x, y);
     }
 }
-
 
         function drawEllipse(startX, startY, endX, endY) {
             const selectedColor = colorPicker.value;
