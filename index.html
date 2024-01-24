@@ -132,10 +132,14 @@
 
             context.strokeStyle = selectedTool === 'eraser' ? 'white' : selectedColor;
 
-            context.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left - canvas.scrollLeft;
+            const y = e.clientY - rect.top - canvas.scrollTop;
+
+            context.lineTo(x, y);
             context.stroke();
             context.beginPath();
-            context.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            context.moveTo(x, y);
         }
 
         function floodFill(x, y, fillColor) {
