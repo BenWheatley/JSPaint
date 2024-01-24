@@ -13,6 +13,7 @@
             align-items: center;
             height: 100vh;
             background-color: #f0f0f0;
+            flex-direction: column; /* Align items in a column */
         }
 
         canvas {
@@ -26,7 +27,7 @@
     </style>
 </head>
 <body>
-    <div>
+    <div id="toolSelector">
         <label for="toolSelector">Select Tool: </label>
         <select id="toolSelector">
             <option value="pencil">Pencil</option>
