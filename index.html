@@ -77,11 +77,21 @@
         function draw(e) {
             if (!painting) return;
 
-            context.lineWidth = 5;
-            context.lineCap = 'round';
-
             const selectedTool = toolSelector.value;
             const selectedColor = colorPicker.value;
+
+            context.lineCap = 'round';
+
+            switch (selectedTool) {
+                case 'pencil':
+                    context.lineWidth = 1;
+                    break;
+                case 'brush':
+                case 'eraser':
+                    context.lineWidth = 10;
+                    break;
+                // Add more cases for other tools
+            }
 
             context.strokeStyle = selectedTool === 'eraser' ? 'white' : selectedColor;
 
