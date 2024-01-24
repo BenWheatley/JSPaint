@@ -162,22 +162,31 @@
         function drawEllipse(startX, startY, endX, endY) {
             const selectedColor = colorPicker.value;
             const brushSize = brushSizeInput.value;
-
+            
             context.lineCap = 'round';
-
+            
             context.lineWidth = brushSize;
             context.strokeStyle = selectedColor;
-
-            const x = (startX + endX) / 2;
-            const y = (startY + endY) / 2;
-            const radiusX = Math.abs(endX - startX) / 2;
-            const radiusY = Math.abs(endY - startY) / 2;
-
+            
+            const rect = canvas.getBoundingClientRect();
+            
+            // Adjusting the coordinates to account for scroll position
+            const x1 = startX - rect.left - canvas.scrollLeft;
+            const y1 = startY - rect.top - canvas.scrollTop;
+            const x2 = endX - rect.left - canvas.scrollLeft;
+            const y2 = endY - rect.top - canvas.scrollTop;
+            
+            const x = (x1 + x2) / 2;
+            const y = (y1 + y2) / 2;
+            const radiusX = Math.abs(x2 - x1) / 2;
+            const radiusY = Math.abs(y2 - y1) / 2;
+            
             context.beginPath();
             context.ellipse(x, y, radiusX, radiusY, 0, 0, 2 * Math.PI);
             context.stroke();
             context.beginPath();
         }
+
 
         function floodFill(x, y, fillColor) {
             const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
