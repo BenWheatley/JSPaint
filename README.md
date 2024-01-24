@@ -25,7 +25,9 @@ https://chat.openai.com/share/e2a6b513-c088-449d-8d8f-4f4c73892f11
 
 Yes, it can. Just ask for one feature at a time, not the whole thing in one go.
 
-Sure, there's a bug with the offset of the preview of the ellipse if your image is big enough to cause scroll bars to appear — if I hadn't lost motivation I would ask the magical machine mind to fix it for me.
+Sure, there's a bug with the offset of the preview of the ellipse if your image is big enough to cause scroll bars to appear — if I hadn't lost motivation half way through, I would ask the magical machine mind to fix it for me.
+
+Hopefully the features which are present and the process by which they appeared is sufficient to demonstrate the point for the rest that I couldn't be bothered to ask for.
 
 ## License
 
