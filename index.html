@@ -127,37 +127,48 @@
             }
         }
 
-        function draw(e) {
-            if (!painting) return;
+function draw(e) {
+    if (!painting) return;
 
-            const selectedTool = toolSelector.value;
-            const selectedColor = colorPicker.value;
-            const brushSize = brushSizeInput.value;
+    const selectedTool = toolSelector.value;
 
-            context.lineCap = 'round';
+    if (selectedTool === 'drawEllipse') {
+        // Handle ellipse drawing
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left - canvas.scrollLeft;
+        const y = e.clientY - rect.top - canvas.scrollTop;
+        drawEllipse(startX, startY, x, y);
+    } else {
+        // Handle other tools (e.g., pencil, brush, eraser)
+        const selectedColor = colorPicker.value;
+        const brushSize = brushSizeInput.value;
 
-            switch (selectedTool) {
-                case 'pencil':
-                    context.lineWidth = 1;
-                    break;
-                case 'brush':
-                case 'eraser':
-                    context.lineWidth = brushSize;
-                    break;
-                // Add more cases for other tools
-            }
+        context.lineCap = 'round';
 
-            context.strokeStyle = selectedTool === 'eraser' ? 'white' : selectedColor;
-
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left - canvas.scrollLeft;
-            const y = e.clientY - rect.top - canvas.scrollTop;
-
-            context.lineTo(x, y);
-            context.stroke();
-            context.beginPath();
-            context.moveTo(x, y);
+        switch (selectedTool) {
+            case 'pencil':
+                context.lineWidth = 1;
+                break;
+            case 'brush':
+            case 'eraser':
+                context.lineWidth = brushSize;
+                break;
+            // Add more cases for other tools
         }
+
+        context.strokeStyle = selectedTool === 'eraser' ? 'white' : selectedColor;
+
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left - canvas.scrollLeft;
+        const y = e.clientY - rect.top - canvas.scrollTop;
+
+        context.lineTo(x, y);
+        context.stroke();
+        context.beginPath();
+        context.moveTo(x, y);
+    }
+}
+
 
         function drawEllipse(startX, startY, endX, endY) {
             const selectedColor = colorPicker.value;
